@@ -1,5 +1,5 @@
 import express from "express"
-
+import { adminModel } from "../db.js";
 const adminRouter  = express.Router();
 
 adminRouter.post("/signup",function(req,res){
