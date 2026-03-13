@@ -1,9 +1,11 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
-console.log("connect to");
+//console.log("connect to");
 
- await mongoose.connect("mongodb+srv://idiotstdnt:qaCm4IupcVdjbPGG@cluster0.zsl0v.mongodb.net/coursera")
+
+
+ //await mongoose.connect("mongodb+srv://idiotstdnt:qaCm4IupcVdjbPGG@cluster0.zsl0v.mongodb.net/coursera")
 
 const userSchema =  new Schema({
     email : {type:String,unique : true},
