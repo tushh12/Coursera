@@ -1,16 +1,40 @@
 import express from "express"
 import { adminModel } from "../db.js";
+import jwt from "jsonwebtoken";
 const adminRouter  = express.Router();
 
-adminRouter.post("/signup",function(req,res){
+
+adminRouter.post("/signup", async function(req,res){
+    const {email,password,firstName,lastName} = req.body;
+    await adminModel.create({
+        email:email,
+        password:password,
+        firstName:firstName,
+        lastName:lastName
+    })
     res.json({
-        message : "signup endpoint"
+        message : "admin got signup"
     })
 })
-adminRouter.post("/signin",function(req,res){
-    res.json({
-        message : "signup endpoint"
+adminRouter.post("/signin", async function(req,res){
+    const {email,password} = req.body;
+    const user = await adminModel.findOne({
+        email:email,
+        password:password
     })
+    if(user){
+        const token = jwt.sign({
+            id : admin._,
+        },process.env.JWT_ADMIN_PASSWORD);
+           
+        res.json({
+        token : token
+    })
+ } else{
+        res.status(403).json({
+            message : "incorrect credientails"
+        })
+    }   
 })
 adminRouter.post("/course",function(req,res){
     res.json({
