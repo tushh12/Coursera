@@ -8,15 +8,36 @@ const ObjectId = mongoose.Types.ObjectId;
  //await mongoose.connect("mongodb+srv://idiotstdnt:qaCm4IupcVdjbPGG@cluster0.zsl0v.mongodb.net/coursera")
 
 const userSchema =  new Schema({
-    email : {type:String,unique : true},
-    password : String,
-    FirstName: String,
+    email : {type:String,
+             unique : true,
+             required: true,
+             lowercase:true,
+             trim:true
+    },
+    password : {
+        type : String,
+        required : true,
+        minLength:6
+    },
+    FirstName: {
+        type:String,
+        required : true
+    },
     LastName : String,
 });
 
 const adminSchema =  new Schema({
-    email : {type:String,unique:true},
-    password : String,
+    email : {type:String,
+            unique:true,
+            required:true,
+            lowercase:true,
+            trim:true,        
+        },
+    password : {
+        type: String,
+        required:true,
+        minLength:6,
+    },
     FirstName : String,
     LastName : String,
 });

@@ -1,5 +1,5 @@
 import express from "express"
-import { adminModel } from "../db.js";
+import { adminModel, courseModel } from "../db.js";
 import jwt from "jsonwebtoken";
 const adminRouter  = express.Router();
 
@@ -24,7 +24,7 @@ adminRouter.post("/signin", async function(req,res){
     })
     if(user){
         const token = jwt.sign({
-            id : admin._,
+            id : admin._id,
         },process.env.JWT_ADMIN_PASSWORD);
            
         res.json({
@@ -36,19 +36,48 @@ adminRouter.post("/signin", async function(req,res){
         })
     }   
 })
-adminRouter.post("/course",function(req,res){
+adminRouter.post("/course", async function(req,res){
+     const adminId = req.userId;
+     const {title,imageUrl,description,price} = req.body;
+     // for taking image not an image url watch creating web3 sass in 6 hours - harkirat singh
+     const course = await courseModel.create({
+        title:title,
+        description:description,
+        imageUrl:imageUrl,
+        price:price,
+        creatorId:adminId,
+     })
     res.json({
-        message : "i think it one of that where you can create the courses"
+        message : "Course created",
+        courseId : course._id
     })
 })
-adminRouter.put("/course",function(req,res){
+adminRouter.put("/courseupdate", async function(req,res){
+      const adminId = req.userId;
+      const {title,imageUrl,description,price,courseId} = req.body;
+      const course = await courseModel.findOneAndUpdate({
+        _id : courseId,
+        creatorId : adminId
+      },{
+        title: title,
+        imageUrl:imageUrl,
+        description:description,
+        price:price,
+      })
+      
     res.json({
-        message : "course i think one of that "
+        message : "Course updated",
+        courseId : course._id
     })
 })
-adminRouter.get("/course",function(req,res){
+adminRouter.get("/course",async function(req,res){
+    const adminId = req.userId;
+    const courses =  await courseModel.find({
+            creatorId : adminId
+    })
     res.json({
-        message : " one of the course routes i think to see because it has the get one routes"
+        message : "Course updated",
+        courses
     })
 })
 
