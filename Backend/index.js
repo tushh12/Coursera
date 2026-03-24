@@ -8,16 +8,24 @@ dotenv.config();
 const app = express();
 const PORT = 3000;
 app.use(express.json());
+app.use("/user",userRouter);  
+app.use("/course",courseRouter);
+app.use("/admin",adminRouter);
 app.get('/',(req,res) => {
   res.send("hello from the backend! the mordern server is running")
     });
 async function  main (){
+  try {
  await mongoose.connect(process.env.MONGO_URI);
+ console.log("Successfully connected to mongodb");
+ 
 app.listen(PORT,() => {
     console.log(`server is running on http://localhost:${PORT}`);    
-})  
+}) 
+  } 
+  catch(error)
+  {
+    console.error("Databse connection failed",error);
+  } 
 }
 main();
-app.use("/user",userRouter);  
-app.use("/course",courseRouter);
-app.use("/admin",adminRouter);

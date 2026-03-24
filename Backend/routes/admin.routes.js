@@ -2,6 +2,7 @@ import express from "express"
 import { adminModel, courseModel } from "../db.js";
 import jwt from "jsonwebtoken";
 const adminRouter  = express.Router();
+import adminMiddleware from "../middlewares/adminmiddleware.js";
 
 
 adminRouter.post("/signup", async function(req,res){
@@ -36,7 +37,7 @@ adminRouter.post("/signin", async function(req,res){
         })
     }   
 })
-adminRouter.post("/course", async function(req,res){
+adminRouter.post("/course",adminMiddleware, async function(req,res){
      const adminId = req.userId;
      const {title,imageUrl,description,price} = req.body;
      // for taking image not an image url watch creating web3 sass in 6 hours - harkirat singh
@@ -52,7 +53,7 @@ adminRouter.post("/course", async function(req,res){
         courseId : course._id
     })
 })
-adminRouter.put("/courseupdate", async function(req,res){
+adminRouter.put("/courseupdate", adminMiddleware, async function(req,res){
       const adminId = req.userId;
       const {title,imageUrl,description,price,courseId} = req.body;
       const course = await courseModel.findOneAndUpdate({
@@ -70,7 +71,7 @@ adminRouter.put("/courseupdate", async function(req,res){
         courseId : course._id
     })
 })
-adminRouter.get("/course",async function(req,res){
+adminRouter.get("/course", adminMiddleware, async function(req,res){
     const adminId = req.userId;
     const courses =  await courseModel.find({
             creatorId : adminId
