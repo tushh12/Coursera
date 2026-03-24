@@ -3,6 +3,7 @@ import { courseModel, purchaseModel, userModel } from "../db.js";
 import jwt from "jsonwebtoken";
 import userMiddleware from "../middlewares/usermiddleware.js";
 import { userSignupSchema,signinSchema } from "../validation.js";
+import bcrypt from "bcrypt"
 
 const userRouter = express.Router();
 
@@ -16,13 +17,12 @@ userRouter.post("/signup", async function(req,res){
     }
     const {email,password,firstName,lastName} = req.body; // adding zod validation
     // hash the password from bycrypt so plain text password looks alike
-
     // put inside the try catch block
-
-    try{
-    await userModel.create({
+    try {
+     const hashPassword =  await bcrypt.hash(password,10);
+     await userModel.create({
         email:email,
-        password:password,
+        password:hashPassword,
         firstName:firstName,
         lastName:lastName
     })
@@ -44,14 +44,18 @@ userRouter.post("/signin", async function(req,res){
             message : "invalid input "
         })
     }
-    const {email,password} = req.body;
+    const {email,password} = parsedData.data;
     // ideally password should be hashed and hence you can't compare user provided password and database password
-    
-    const user = await userModel.findOne({
-        email:email,
-        password:password,
-    })
-    if(user){
+    const userCheckByEmail = await userModel.findOne({
+        email : email,
+    }) 
+    if(!userCheckByEmail){
+        res.status(403).json({
+            message : "Email id is not registered"
+        })
+    }
+    const passwordMatch = bcrypt.compare(password,user.password);
+    if(passwordMatch){
     const token = jwt.sign({
         id : user._id,
     },process.env.JWT_USER_PASSWORD);
@@ -70,7 +74,7 @@ userRouter.post("/signin", async function(req,res){
 });
 userRouter.get("/purchased", userMiddleware, async function(req,res){
       const userId = req.userId;
-      const purchases = await purchaseModel.findOne({
+      const purchases = await purchaseModel.find({
         userId,
       });
       let purchaseCourseId = [];
